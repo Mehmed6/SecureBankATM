@@ -1,8 +1,11 @@
 package com.doganmehmet.app.security;
 
+
+import com.doganmehmet.app.enums.AuditType;
 import com.doganmehmet.app.exception.ApiException;
 import com.doganmehmet.app.exception.MyError;
 import com.doganmehmet.app.repository.IUserRepository;
+import com.doganmehmet.app.service.AuditService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,11 +18,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final IUserRepository m_userRepository;
     private final BCryptPasswordEncoder m_passwordEncoder;
+    private final AuditService m_auditService;
 
-    public CustomAuthenticationProvider(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder)
+    public CustomAuthenticationProvider(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuditService auditService)
     {
         m_userRepository = userRepository;
         m_passwordEncoder = passwordEncoder;
+        m_auditService = auditService;
     }
 
     @Override
@@ -35,11 +40,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!m_passwordEncoder.matches( authentication.getCredentials().toString(), user.getPassword())) {
             user.setLoginAttempt(user.getLoginAttempt() + 1);
             m_userRepository.save(user);
+            m_auditService.logAudit(user.getUsername(), AuditType.INCORRECT_PASSWORD, "The password has been entered incorrectly: Login attempt: " + user.getLoginAttempt());
+
             throw new ApiException(MyError.PASSWORD_INCORRECT, "Remaining attempts: " + (3 - user.getLoginAttempt()));
         }
 
         user.setLoginAttempt(0);
         m_userRepository.save(user);
+        m_auditService.logAudit(user.getUsername(), AuditType.LOGIN, "Login successful");
 
         return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
     }

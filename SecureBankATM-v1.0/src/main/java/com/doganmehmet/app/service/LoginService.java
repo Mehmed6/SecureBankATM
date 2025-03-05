@@ -12,24 +12,20 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
     private final CustomAuthenticationProvider m_authenticationProvider;
+    private final AuditService m_auditService;
 
-    public LoginService(CustomAuthenticationProvider authenticationProvider)
+    public LoginService(CustomAuthenticationProvider authenticationProvider, AuditService auditService)
     {
         m_authenticationProvider = authenticationProvider;
+        m_auditService = auditService;
     }
 
     public Authentication login(LoginRequestDTO loginRequestDTO) throws ApiException
     {
-        try {
-
-            return m_authenticationProvider.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequestDTO.getUsername(),
-                            loginRequestDTO.getPassword()));
-        }
-        catch (Exception e) {
-            throw new ApiException(MyError.GENERAL_ERROR, e.getMessage());
-        }
+        return m_authenticationProvider.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequestDTO.getUsername(),
+                        loginRequestDTO.getPassword()));
 
     }
 

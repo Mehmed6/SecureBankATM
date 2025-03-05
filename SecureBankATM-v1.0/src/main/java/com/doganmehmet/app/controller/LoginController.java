@@ -37,9 +37,9 @@ public class LoginController {
     public String login(@Valid @ModelAttribute("loginRequestDTO") LoginRequestDTO loginRequestDTO,
                         BindingResult bindingResult, Model model, HttpSession session) {
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors())
             return "login/my-login";
-        }
+
 
         try {
             Authentication authentication = m_loginService.login(loginRequestDTO);

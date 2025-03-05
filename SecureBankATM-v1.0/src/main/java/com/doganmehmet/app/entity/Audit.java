@@ -1,8 +1,7 @@
 package com.doganmehmet.app.entity;
 
-import com.doganmehmet.app.enums.Action;
+import com.doganmehmet.app.enums.AuditType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,17 +20,18 @@ public class Audit {
     private long auditId;
     private String username;
     @Enumerated(EnumType.STRING)
-    private Action action;
+    @Column(name = "audit_type")
+    private AuditType auditType;
     @Column(name = "action_date")
     private LocalDateTime actionDate;
     @Column(name = "ip_address")
     private String ipAddress;
     private String description;
 
-    public Audit(String username, Action action, LocalDateTime actionDate, String ipAddress, String description)
+    public Audit(String username, AuditType auditType, LocalDateTime actionDate, String ipAddress, String description)
     {
         this.username = username;
-        this.action = action;
+        this.auditType = auditType;
         this.actionDate = actionDate;
         this.ipAddress = ipAddress;
         this.description = description;

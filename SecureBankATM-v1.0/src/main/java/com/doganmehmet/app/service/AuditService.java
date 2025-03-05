@@ -1,7 +1,7 @@
 package com.doganmehmet.app.service;
 
 import com.doganmehmet.app.entity.Audit;
-import com.doganmehmet.app.enums.Action;
+import com.doganmehmet.app.enums.AuditType;
 import com.doganmehmet.app.repository.IAuditRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
@@ -29,10 +29,10 @@ public class AuditService {
         return ip;
     }
 
-    public void logAudit(String username, Action action, String description)
+    public void logAudit(String username, AuditType auditType, String description)
     {
         var ip = getIpAddress();
         var actionDate = LocalDateTime.now();
-        m_auditRepository.save(new Audit(username, action, actionDate, ip, description));
+        m_auditRepository.save(new Audit(username, auditType, actionDate, ip, description));
     }
 }

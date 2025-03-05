@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RegisterController {
@@ -28,7 +29,9 @@ public class RegisterController {
     }
 
     @PostMapping("register")
-    public String register(@Valid @ModelAttribute UserDTO userDTO, BindingResult bindingResult, Model model)
+    public String register(@Valid @ModelAttribute UserDTO userDTO, BindingResult bindingResult,
+                           RedirectAttributes redirectAttributes,
+                           Model model)
     {
         if (bindingResult.hasErrors())
             return "register/my-register";
@@ -41,7 +44,7 @@ public class RegisterController {
             return "register/my-register";
         }
 
-        model.addAttribute("message", "Registration successful! You can log in now.");
-        return "login/my-login";
+       redirectAttributes.addFlashAttribute("message", "Registration successful! You can log in now.");
+        return "redirect:auth/login";
     }
 }
