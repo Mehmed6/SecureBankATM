@@ -2,8 +2,10 @@ package com.doganmehmet.app.security;
 
 
 import com.doganmehmet.app.enums.AuditType;
+import com.doganmehmet.app.enums.Status;
 import com.doganmehmet.app.exception.ApiException;
 import com.doganmehmet.app.exception.MyError;
+import com.doganmehmet.app.repository.ISessionRepository;
 import com.doganmehmet.app.repository.IUserRepository;
 import com.doganmehmet.app.service.AuditService;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,12 +21,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final IUserRepository m_userRepository;
     private final BCryptPasswordEncoder m_passwordEncoder;
     private final AuditService m_auditService;
+    private final ISessionRepository m_sessionRepository;
 
-    public CustomAuthenticationProvider(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuditService auditService)
+    public CustomAuthenticationProvider(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuditService auditService, ISessionRepository sessionRepository)
     {
         m_userRepository = userRepository;
         m_passwordEncoder = passwordEncoder;
         m_auditService = auditService;
+        m_sessionRepository = sessionRepository;
     }
 
     @Override
@@ -32,6 +36,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     {
         var user = m_userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ApiException(MyError.USER_NOT_FOUND));
+
+        if (user.getLoginAttempt() == 3 && !user.getStatus().equals(Status.BLOCKED)) {
+            m_auditService.logAudit(user.getUsername(), AuditType.BANNED, "Due to multiple failed login attempts, the account has been locked");
+            user.setStatus(Status.BLOCKED);
+            m_userRepository.save(user);
+        }
 
         if (user.getLoginAttempt() >= 3)
             throw new ApiException(MyError.USER_BLOCKED);

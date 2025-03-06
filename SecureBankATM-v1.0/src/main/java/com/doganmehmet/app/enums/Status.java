@@ -1,5 +1,5 @@
 package com.doganmehmet.app.enums;
 
 public enum Status {
-    ACTIVE,PASSIVE,INACTIVE
+    ACTIVE,PASSIVE,INACTIVE, BLOCKED
 }

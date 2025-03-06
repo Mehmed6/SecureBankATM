@@ -1,5 +1,6 @@
 package com.doganmehmet.app.config;
 
+import com.doganmehmet.app.security.CustomAuthenticationEntryPoint;
 import com.doganmehmet.app.security.CustomAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,9 +41,16 @@ public class SecurityConfig {
                         .expiredUrl("/auth/login?expired=true")
                         .maxSessionsPreventsLogin(false)
                 )
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
                 .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
-                        .logoutSuccessUrl(LOGIN).permitAll());
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl(LOGIN)
+                        .invalidateHttpSession(true) // Oturumu temizle
+                        .clearAuthentication(true) // Kimlik bilgilerini temizle
+                        .deleteCookies("JSESSIONID") // Tarayıcıdaki oturum çerezini sil
+                );
+
 
         return http.build();
     }

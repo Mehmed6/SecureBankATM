@@ -2,10 +2,10 @@ package com.doganmehmet.app.controller;
 
 import com.doganmehmet.app.dto.LoginRequestDTO;
 import com.doganmehmet.app.exception.ApiException;
+import com.doganmehmet.app.repository.IUserRepository;
 import com.doganmehmet.app.service.LoginService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class LoginController {
 
     private final LoginService m_loginService;
+    private final IUserRepository m_userRepository;
 
-    public LoginController(LoginService loginService)
+    public LoginController(LoginService loginService, IUserRepository userRepository)
     {
         m_loginService = loginService;
+        m_userRepository = userRepository;
     }
-
 
     @GetMapping("/auth/login")
     public String showLoginPage(Model model) {
@@ -35,30 +36,37 @@ public class LoginController {
 
     @PostMapping("/auth/login")
     public String login(@Valid @ModelAttribute("loginRequestDTO") LoginRequestDTO loginRequestDTO,
-                        BindingResult bindingResult, Model model, HttpSession session) {
+                        BindingResult bindingResult,
+                        Model model, HttpSession session) {
 
         if (bindingResult.hasErrors())
             return "login/my-login";
 
-
         try {
-            Authentication authentication = m_loginService.login(loginRequestDTO);
+            var authentication = m_loginService.login(loginRequestDTO);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-            return "/dashboard";
+            var user = m_userRepository.findByUsername(loginRequestDTO.getUsername()).get();
+            var fullName = user.getFirstname() + " " + user.getLastname();
+
+            session.setAttribute("fullName", fullName.toUpperCase());
+            return "redirect:/dashboard";
+
         } catch (ApiException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "login/my-login";
         }
     }
 
-    @GetMapping("dashboard")
-    public String showDashboard()
-    {
-        return "dashboard";
-    }
+//    @GetMapping("dashboard")
+//    public String showDashboard(HttpSession session, Model model)
+//    {
+//        var fullName = session.getAttribute("fullName").toString();
+//        model.addAttribute("fullName", fullName);
+//        return "dashboard";
+//    }
 
 }

@@ -3,6 +3,7 @@ package com.doganmehmet.app.entity;
 import com.doganmehmet.app.enums.Action;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "transactions")
 public class Transaction {
     @Id
@@ -39,4 +41,15 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "to_user_id")
     private User toUser;
+
+    public Transaction(Action transactionType, BigDecimal amount, String description, LocalDateTime transactionDate, String transactionStatus, User fromUser, User toUser)
+    {
+        this.transactionType = transactionType;
+        this.amount = amount;
+        this.description = description;
+        this.transactionDate = transactionDate;
+        this.transactionStatus = transactionStatus;
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+    }
 }

@@ -22,7 +22,7 @@ public class RegisterController {
     }
 
     @GetMapping("register")
-    public String showRegisterForm(Model model)
+    public String showRegisterPage(Model model)
     {
         model.addAttribute("userDTO", new UserDTO());
         return "register/my-register";
