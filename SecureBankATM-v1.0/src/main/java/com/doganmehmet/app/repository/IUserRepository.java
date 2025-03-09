@@ -20,4 +20,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByIban(String iban);
 
+
+    boolean existsByRole(Role role);
 }
