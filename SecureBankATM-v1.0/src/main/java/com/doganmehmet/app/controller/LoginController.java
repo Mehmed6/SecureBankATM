@@ -49,10 +49,13 @@ public class LoginController {
 
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
+            if (authentication.getPrincipal().toString().equalsIgnoreCase("admin"))
+                return "redirect:/admin/save/bank";
+
             var user = m_userRepository.findByUsername(loginRequestDTO.getUsername()).get();
             var fullName = user.getFirstname() + " " + user.getLastname();
 
-            session.setAttribute("fullName", fullName.toUpperCase());
+            session.setAttribute("fullName", fullName);
             return "redirect:/dashboard";
 
         } catch (ApiException ex) {
@@ -60,13 +63,4 @@ public class LoginController {
             return "login/my-login";
         }
     }
-
-//    @GetMapping("dashboard")
-//    public String showDashboard(HttpSession session, Model model)
-//    {
-//        var fullName = session.getAttribute("fullName").toString();
-//        model.addAttribute("fullName", fullName);
-//        return "dashboard";
-//    }
-
 }

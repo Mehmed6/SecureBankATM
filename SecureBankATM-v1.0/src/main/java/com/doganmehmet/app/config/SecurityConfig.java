@@ -19,6 +19,7 @@ public class SecurityConfig {
 
     private final String LOGIN = "/auth/login";
     private final String REGISTER = "/register";
+    private final String ADMIN = "/admin/**";
 
     private final CustomAuthenticationProvider m_authenticationProvider;
 
@@ -33,7 +34,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(LOGIN, REGISTER).permitAll()
-                                .requestMatchers("/welcome").authenticated()
+                                .requestMatchers(ADMIN).hasRole("ADMIN")
                                 .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::migrateSession)
@@ -46,9 +47,9 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl(LOGIN)
-                        .invalidateHttpSession(true) // Oturumu temizle
-                        .clearAuthentication(true) // Kimlik bilgilerini temizle
-                        .deleteCookies("JSESSIONID") // Tarayıcıdaki oturum çerezini sil
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                 );
 
 

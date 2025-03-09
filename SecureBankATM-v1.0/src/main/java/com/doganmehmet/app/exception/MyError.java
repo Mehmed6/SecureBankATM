@@ -16,6 +16,10 @@ public enum MyError {
     PASSWORD_INCORRECT("1004", "Password incorrect! %s"),
     USER_BLOCKED("1005", "Your account has been locked due to 3 incorrect password attempts!"),
     INSUFFICIENT_BALANCE("1006", "Insufficient balance!"),
+    BANK_NOT_FOUND("1007", "Bank not found!"),
+    BANK_ALREADY_EXISTS("1008", "Bank already exists!"),
+    ADMIN_ERROR("1009", "This username is reserved for admins only!"),
+
 
     ;
 

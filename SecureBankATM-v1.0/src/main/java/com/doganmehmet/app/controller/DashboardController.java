@@ -13,8 +13,11 @@ public class DashboardController {
     @GetMapping
     public String dashboard(HttpSession session, Model model)
     {
-        var fullName = session.getAttribute("fullName").toString();
-        model.addAttribute("fullName", fullName);
+        var fullName = session.getAttribute("fullName");
+        if (fullName != null)
+            model.addAttribute("fullName", fullName.toString().toUpperCase());
+        else
+            model.addAttribute("fullName", "admin".toUpperCase());
         return "dashboard/dashboard";
     }
 }
