@@ -4,9 +4,11 @@ import java.util.Random;
 
 public class IbanGenerator {
 
+    private static final String[] COUNTRY_CODES = {"TR", "DE", "US", "FR", "GB", "NL", "ES", "IT", "CA", "AU"};
+    private static final Random RANDOM = new Random();
     public static String generateRandomIban()
     {
-        var countryCode = "TR";
+        var countryCode = COUNTRY_CODES[RANDOM.nextInt(COUNTRY_CODES.length)];
         var random = new Random();
         var control = String.format("%02d",random.nextInt(100));
         var bankCode = String.format("%04d",random.nextInt(10000));

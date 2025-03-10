@@ -3,7 +3,6 @@ package com.doganmehmet.app.service;
 import com.doganmehmet.app.dto.DepositRequestDTO;
 import com.doganmehmet.app.dto.TransferRequestDTO;
 import com.doganmehmet.app.dto.WithdrawRequestDTO;
-import com.doganmehmet.app.entity.Transaction;
 import com.doganmehmet.app.enums.Action;
 import com.doganmehmet.app.enums.AuditType;
 import com.doganmehmet.app.exception.ApiException;
@@ -11,9 +10,6 @@ import com.doganmehmet.app.exception.MyError;
 import com.doganmehmet.app.repository.ITransactionRepository;
 import com.doganmehmet.app.repository.IUserRepository;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Service
 public class BankingOperationService {
@@ -35,7 +31,7 @@ public class BankingOperationService {
                 .orElseThrow(() -> new ApiException(MyError.USER_NOT_FOUND));
 
         var toUser = m_userRepository.findByIban(transferRequestDTO.getIban())
-                .orElseThrow(() -> new ApiException(MyError.USER_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(MyError.IBAN_NOT_FOUND));
 
         var amount = transferRequestDTO.getAmount();
 

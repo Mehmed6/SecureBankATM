@@ -8,7 +8,6 @@ import com.doganmehmet.app.exception.ApiException;
 import com.doganmehmet.app.exception.MyError;
 import com.doganmehmet.app.mapper.IUserMapper;
 import com.doganmehmet.app.repository.IBankRepository;
-import com.doganmehmet.app.repository.ITransactionRepository;
 import com.doganmehmet.app.repository.IUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

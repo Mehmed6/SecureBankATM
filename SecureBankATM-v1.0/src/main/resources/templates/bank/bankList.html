@@ -1,63 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title>Banks</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <title>Bank List</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <style>
-    body {
-      background-color: #e9ecef;
-      font-family: Arial, sans-serif;
-    }
-    .card {
-      background-color: #ffffff;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #003366;
-      margin-bottom: 30px;
-    }
-    .table th, .table td {
-      text-align: center;
-      vertical-align: middle;
-    }
-    .table th {
-      background-color: #003366;
-      color: white;
-    }
-    .table-striped tbody tr:nth-child(odd) {
-      background-color: #f7f7f7;
-    }
-    .table-hover tbody tr:hover {
-      background-color: #f1f1f1;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/custom-table.css}">
 </head>
-<body style="background-color: #f8f9fa;">
-<div class="container mt-5">
+<body>
+<div class="container py-4">
   <div class="card">
-    <h1 class="text-center">Bank List</h1>
-    <table class="table table-bordered table-hover table-striped">
-      <thead class="table-dark">
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Bank Name</th>
-        <th scope="col">Swift Code</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="bank : ${banks}">
-        <td th:text="${bank.getBankId()}"></td>
-        <td th:text="${bank.getBankName()}"></td>
-        <td th:text="${bank.getSwiftCode()}"></td>
-      </tr>
-      </tbody>
-    </table>
-    <div class="text-center">
-      <a th:href="@{/admin/save/bank}" class="btn btn-primary mb-3 w-25">Add a New Bank</a>
+    <div class="card-body">
+      <h1 class="text-center">Bank List</h1>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-dark">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Bank Name</th>
+            <th scope="col">Swift Code</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="bank : ${banks}">
+            <td th:text="${bank.getBankId()}"></td>
+            <td th:text="${bank.getBankName()}"></td>
+            <td th:text="${bank.getSwiftCode()}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item" th:classappend="${banks.first} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/admin/bank/list(page=${banks.number - 1},pageSize=${banks.size})}">Previous</a>
+          </li>
+
+          <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, banks.totalPages - 1)}"
+            th:classappend="${pageNum == banks.number} ? 'active'"
+            th:if="${pageNum >= banks.number - 2 && pageNum <= banks.number + 2}">
+            <a class="page-link" th:href="@{/admin/bank/list(page=${pageNum},pageSize=${banks.size})}" th:text="${pageNum + 1}"></a>
+          </li>
+
+          <li class="page-item" th:classappend="${banks.last} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/admin/bank/list(page=${banks.number + 1},pageSize=${banks.size})}">Next</a>
+          </li>
+        </ul>
+      </nav>
+
     </div>
   </div>
 </div>
+</body>
 </html>

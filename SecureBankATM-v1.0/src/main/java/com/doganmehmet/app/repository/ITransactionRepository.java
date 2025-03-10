@@ -3,6 +3,8 @@ package com.doganmehmet.app.repository;
 import com.doganmehmet.app.entity.Transaction;
 import com.doganmehmet.app.entity.User;
 import com.doganmehmet.app.enums.Action;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,4 +26,6 @@ public interface ITransactionRepository extends JpaRepository<Transaction, Long>
     {
         save(new Transaction(action, amount, description, LocalDateTime.now(), status, fromUser, null));
     }
+
+    Page<Transaction> findAllByFromUser(User fromUser, Pageable pageable);
 }

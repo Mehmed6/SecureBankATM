@@ -5,12 +5,15 @@ import com.doganmehmet.app.entity.Bank;
 import com.doganmehmet.app.exception.ApiException;
 import com.doganmehmet.app.exception.MyError;
 import com.doganmehmet.app.mapper.IAuditMapper;
+import com.doganmehmet.app.mapper.IBankMapper;
 import com.doganmehmet.app.mapper.ITransactionMapper;
 import com.doganmehmet.app.mapper.IUserMapper;
 import com.doganmehmet.app.repository.IAuditRepository;
 import com.doganmehmet.app.repository.IBankRepository;
 import com.doganmehmet.app.repository.ITransactionRepository;
 import com.doganmehmet.app.repository.IUserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +27,9 @@ public class BankAdminService {
     private final IUserMapper m_userMapper;
     private final IAuditMapper m_auditMapper;
     private final ITransactionMapper m_transactionMapper;
+    private final IBankMapper m_bankMapper;
 
-    public BankAdminService(IBankRepository bankRepository, IUserRepository userRepository, IAuditRepository auditRepository, ITransactionRepository transactionRepository, IUserMapper userMapper, IAuditMapper auditMapper, ITransactionMapper transactionMapper)
+    public BankAdminService(IBankRepository bankRepository, IUserRepository userRepository, IAuditRepository auditRepository, ITransactionRepository transactionRepository, IUserMapper userMapper, IAuditMapper auditMapper, ITransactionMapper transactionMapper, IBankMapper bankMapper)
     {
         m_bankRepository = bankRepository;
         m_userRepository = userRepository;
@@ -34,6 +38,7 @@ public class BankAdminService {
         m_userMapper = userMapper;
         m_auditMapper = auditMapper;
         m_transactionMapper = transactionMapper;
+        m_bankMapper = bankMapper;
     }
 
     public void saveBank(String bankName)
@@ -51,49 +56,58 @@ public class BankAdminService {
         return m_bankRepository.findAll();
     }
 
-    public List<BankUsersDTO> findAllUserByBankName(String bankName)
+    public Page<BankDTO> findAllPageable(Pageable pageable)
     {
-        return m_userMapper.toBankUsersDTOList(m_bankRepository.findByBankName(bankName)
-                .orElseThrow(() -> new ApiException(MyError.BANK_NOT_FOUND)).getUsers());
+        return m_bankMapper.toBankDTOPage(m_bankRepository.findAll(pageable));
     }
 
-    public List<BankUsersDTO> findAllUsers()
+    public Page<BankUsersDTO> findAllUserByBankNamePageable(String bankName, Pageable pageable)
     {
-        return m_userMapper.toBankUsersDTOList(m_userRepository.findAll());
+        var bank = m_bankRepository.findByBankName(bankName)
+                .orElseThrow(() -> new ApiException(MyError.BANK_NOT_FOUND));
+
+        return m_userMapper.toBankUsersDTOPage(m_userRepository.findAllByBank(bank, pageable));
     }
 
-    public List<UserBalanceDTO> findAllUsersBalancesByBankName(String bankName)
+    public Page<BankUsersDTO> findAllUsersPageable(Pageable pageable)
+    {
+        return m_userMapper.toBankUsersDTOPage(m_userRepository.findAll(pageable));
+    }
+
+    public Page<UserBalanceDTO> findAllUsersBalancesByBankNamePageable(String bankName, Pageable pageable)
     {
         m_bankRepository.findByBankName(bankName).orElseThrow(() -> new ApiException(MyError.BANK_NOT_FOUND));
 
-        return m_bankRepository.findAllUsersWithBalancesByBankName(bankName);
+        return m_bankRepository.findAllUsersWithBalancesByBankName(bankName, pageable);
     }
 
-    public List<UserBalanceAllDTO> findAllUsersBalances()
+    public Page<UserBalanceAllDTO> findAllUsersBalancesPageable(Pageable pageable)
     {
-        return m_bankRepository.findAllUsersWithBalances();
+        return m_bankRepository.findAllUsersWithBalances(pageable);
     }
 
-    public List<TransactionDTO> findTransactionByUsername(String username)
+    public Page<TransactionDTO> findTransactionByUsernamePageable(String username, Pageable pageable)
     {
-        return m_transactionMapper.toListTransactionDTO(m_userRepository.findByUsername(username)
-                .orElseThrow(() -> new ApiException(MyError.USER_NOT_FOUND)).getTransactions());
+       var user = m_userRepository.findByUsername(username)
+               .orElseThrow(() -> new ApiException(MyError.USER_NOT_FOUND));
+
+       return m_transactionMapper.toTransactionDTOPage(m_transactionRepository.findAllByFromUser(user, pageable));
     }
 
-    public List<TransactionDTO> findAllTransaction()
+    public Page<TransactionDTO> findAllTransactionPageable(Pageable pageable)
     {
-        return m_transactionMapper.toListTransactionDTO(m_transactionRepository.findAll());
+        return m_transactionMapper.toTransactionDTOPage(m_transactionRepository.findAll(pageable));
     }
 
-    public List<AuditDTO> findAuditByUsername(String username)
+    public Page<AuditDTO> findAllAuditPageable(Pageable pageable)
+    {
+        return m_auditMapper.toAuditDTOPage(m_auditRepository.findAll(pageable));
+    }
+
+    public Page<AuditDTO> findAuditByUsernamePageable(String username, Pageable pageable)
     {
         m_userRepository.findByUsername(username).orElseThrow(() -> new ApiException(MyError.USER_NOT_FOUND));
 
-        return m_auditMapper.toAuditDTOList(m_auditRepository.findByUsername(username));
-    }
-
-    public List<AuditDTO> findAllAudit()
-    {
-        return m_auditMapper.toAuditDTOList(m_auditRepository.findAll());
+        return m_auditMapper.toAuditDTOPage(m_auditRepository.findAllByUsername(username, pageable));
     }
 }

@@ -1,4 +1,4 @@
-package com.doganmehmet.app.service;
+package com.doganmehmet.app.utility;
 
 import com.doganmehmet.app.entity.User;
 import com.doganmehmet.app.enums.Role;

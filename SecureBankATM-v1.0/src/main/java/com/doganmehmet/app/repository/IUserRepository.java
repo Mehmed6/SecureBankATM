@@ -1,7 +1,10 @@
 package com.doganmehmet.app.repository;
 
+import com.doganmehmet.app.entity.Bank;
 import com.doganmehmet.app.entity.User;
 import com.doganmehmet.app.enums.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +25,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
 
     boolean existsByRole(Role role);
+
+    Page<User> findAllByBank(Bank bank, Pageable pageable);
 }

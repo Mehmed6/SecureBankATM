@@ -6,6 +6,7 @@ import com.doganmehmet.app.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -19,5 +20,12 @@ public interface ITransactionMapper {
     default String map(User user)
     {
         return user != null ? user.getUsername() : null;
+    }
+
+    TransactionDTO toTransactionDTO(Transaction transaction);
+
+    default Page<TransactionDTO> toTransactionDTOPage(Page<Transaction> transactions)
+    {
+        return transactions.map(this::toTransactionDTO);
     }
 }

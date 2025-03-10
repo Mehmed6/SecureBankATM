@@ -2,15 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Transaction History</title>
+    <title th:text="${username.toUpperCase() + ' Transaction History'}"></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/custom-table.css}">
+
 </head>
 <body>
 <div class="container py-4">
     <div class="card">
         <div class="card-body">
-            <h1 class="text-center">Transaction History </h1>
+            <div th:if="${errorMessage}" class="alert alert-danger text-center" th:text="${errorMessage}"></div>
+            <h1 class="text-center" th:text="${username.toUpperCase() + ' Transaction History'}"></h1>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped">
                     <thead class="table-dark">
@@ -40,17 +42,17 @@
                 <nav>
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${transactionLogs.first} ? 'disabled'">
-                            <a class="page-link" th:href="@{/admin/bank/transaction/all/history(page=${transactionLogs.number - 1}, pageSize=${transactionLogs.size})}">Previous</a>
+                            <a class="page-link" th:href="@{|/admin/bank/transaction/history/${username}?page=${transactionLogs.number - 1}&pageSize=${transactionLogs.size}|}">Previous</a>
                         </li>
 
                         <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, transactionLogs.totalPages - 1)}"
                             th:classappend="${pageNum == transactionLogs.number} ? 'active'"
                             th:if="${pageNum >= transactionLogs.number - 2 && pageNum <= transactionLogs.number + 2}">
-                            <a class="page-link" th:href="@{/admin/bank/transaction/all/history(page=${pageNum}, pageSize=${transactionLogs.size})}" th:text="${pageNum + 1}"></a>
+                            <a class="page-link" th:href="@{|/admin/bank/transaction/history/${username}?page=${pageNum}&pageSize=${transactionLogs.size}|}" th:text="${pageNum + 1}"></a>
                         </li>
 
                         <li class="page-item" th:classappend="${transactionLogs.last} ? 'disabled'">
-                            <a class="page-link" th:href="@{/admin/bank/transaction/all/history(page=${transactionLogs.number + 1}, pageSize=${transactionLogs.size})}">Next</a>
+                            <a class="page-link" th:href="@{|/admin/bank/transaction/history/${username}?page=${transactionLogs.number + 1}&pageSize=${transactionLogs.size}|}">Next</a>
                         </li>
                     </ul>
                 </nav>

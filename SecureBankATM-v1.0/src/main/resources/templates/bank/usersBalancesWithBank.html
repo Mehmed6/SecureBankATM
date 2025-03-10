@@ -2,64 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bank Balances</title>
+  <title th:text="${bankName.toUpperCase() + ' Users Balances'}"></title>
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" th:href="@{/css/custom-table.css}">
   <style>
-    body {
-      background-color: #e9ecef;
-      font-family: Arial, sans-serif;
-    }
-    .card {
-      background-color: #ffffff;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #003366;
-      margin-bottom: 30px;
-    }
-    .table th, .table td {
-      text-align: center;
-      vertical-align: middle;
-    }
-    .table th {
-      background-color: #003366;
-      color: white;
-    }
-    .table-striped tbody tr:nth-child(odd) {
-      background-color: #f7f7f7;
-    }
-    .table-hover tbody tr:hover {
-      background-color: #f1f1f1;
-    }
     .balance-column {
       color: #28a745;
       font-weight: bold;
     }
   </style>
 </head>
-<body style="background-color: #f8f9fa;">
-<div class="container mt-5">
+<body>
+<div class="container py-4">
   <div class="card">
-    <h1 class="text-center">Bank Balances</h1>
-    <div th:if="${errorMessage}" class="alert alert-danger text-center" th:text="${errorMessage}"></div>
-    <table class="table table-bordered table-hover table-striped">
-      <thead class="table-dark">
-      <tr>
-        <th scope="col">Username</th>
-        <th scope="col">Balance</th>
-        <th scope="col">Bank Name</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="userBalance : ${userBalancesWithBank}">
-        <td th:text="${userBalance.getUsername()}"></td>
-        <td class="balance-column" th:text="${userBalance.balance} + ' €'"></td>
-        <td th:text="${bankName}"></td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="card-body">
+      <div th:if="${errorMessage}" class="alert alert-danger text-center" th:text="${errorMessage}"></div>
+      <h1 class="text-center" th:text="${bankName.toUpperCase() + ' Users Balances'}"></h1>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-dark">
+          <tr>
+            <th scope="col">Username</th>
+            <th scope="col">Balance</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="userBalance : ${userBalancesWithBank}">
+            <td th:text="${userBalance.getUsername()}"></td>
+            <td class="balance-column" th:text="${userBalance.getBalance()} + ' €'"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item" th:classappend="${userBalancesWithBank.first} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{|/admin/bank/balances/${bankName}?page=${userBalancesWithBank.number - 1}&pageSize=${userBalancesWithBank.size}|}">Previous</a>
+          </li>
+
+          <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, userBalancesWithBank.totalPages - 1)}"
+            th:classappend="${pageNum == userBalancesWithBank.number} ? 'active'"
+            th:if="${pageNum >= userBalancesWithBank.number - 2 && pageNum <= userBalancesWithBank.number + 2}">
+            <a class="page-link" th:href="@{|/admin/bank/balances/${bankName}?page=${pageNum}&pageSize=${userBalancesWithBank.size}|}" th:text="${pageNum + 1}"></a>
+          </li>
+
+          <li class="page-item" th:classappend="${userBalancesWithBank.last} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{|/admin/bank/balances/${bankName}?page=${userBalancesWithBank.number + 1}&pageSize=${userBalancesWithBank.size}|}">Next</a>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
   </div>
 </div>
 </body>

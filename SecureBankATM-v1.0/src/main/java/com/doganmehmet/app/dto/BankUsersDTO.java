@@ -18,7 +18,7 @@ public class BankUsersDTO {
     private String lastname;
     private String email;
     private String iban;
-    private Role role = Role.USER;
+    private Role role;
     private Status status;
     private BigDecimal balance;
     private int loginAttempt;
