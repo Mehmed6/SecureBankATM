@@ -5,7 +5,6 @@ import com.doganmehmet.app.enums.AuditType;
 import com.doganmehmet.app.enums.Status;
 import com.doganmehmet.app.exception.ApiException;
 import com.doganmehmet.app.exception.MyError;
-import com.doganmehmet.app.repository.ISessionRepository;
 import com.doganmehmet.app.repository.IUserRepository;
 import com.doganmehmet.app.service.AuditService;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,14 +20,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final IUserRepository m_userRepository;
     private final BCryptPasswordEncoder m_passwordEncoder;
     private final AuditService m_auditService;
-    private final ISessionRepository m_sessionRepository;
 
-    public CustomAuthenticationProvider(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuditService auditService, ISessionRepository sessionRepository)
+    public CustomAuthenticationProvider(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuditService auditService)
     {
         m_userRepository = userRepository;
         m_passwordEncoder = passwordEncoder;
         m_auditService = auditService;
-        m_sessionRepository = sessionRepository;
     }
 
     @Override

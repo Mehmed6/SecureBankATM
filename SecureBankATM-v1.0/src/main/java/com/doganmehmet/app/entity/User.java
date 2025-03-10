@@ -54,9 +54,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "fromUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Session> sessions;
-
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
