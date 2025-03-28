@@ -43,6 +43,7 @@ This project leverages Spring Security for authentication, Thymeleaf for fronten
 * PostgreSQL
 * Mapstruct
 * Pagination & Sorting
+* Docker & Docker Compose
 
 ## 🔗  Services
 * **RegisterService:** Handles user registration operations, including creating new user accounts and saving user data to the database.
@@ -128,3 +129,7 @@ This class automatically creates an admin user with the username `admin` and pas
 * SWIFT (Society for Worldwide Interbank Financial Telecommunication) code is a unique code used for international banking transactions.
 * This class automatically generates the correct SWIFT code based on the bank name and country code.
 * You can use the `SwiftCodeGenerator` class to generate a random SWIFT code.
+
+### Docker & Docker Compose:
+* The project includes a `docker-compose.yml` file that allows you to run the project in a Docker container.
+* To run the project with Docker and Docker Compose, you can easily start the application by using the Docker Compose file. After cloning the project, run the `docker-compose up --build` command to start the application along with all dependencies.
